@@ -1,0 +1,649 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="简单说下智能电视（包括电视盒子）的安全问题：目前市面上智能电视大多是 androidTV，由于Android原生代码中并没有开启身份认证和登录功能，厂商也对智能电 视源代码没进行修改添加身份认证功能，而且通过最高权限的root用户的模式下工作，这 就导致市面上的android TV很容易被黑客攻击。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android TV adb 5555端口攻击说明">
+<meta property="og:url" content="http://wjdr.net/2016/06/20/androidtv-adb-5555/index.html">
+<meta property="og:site_name" content="Kwok's Notes">
+<meta property="og:description" content="简单说下智能电视（包括电视盒子）的安全问题：目前市面上智能电视大多是 androidTV，由于Android原生代码中并没有开启身份认证和登录功能，厂商也对智能电 视源代码没进行修改添加身份认证功能，而且通过最高权限的root用户的模式下工作，这 就导致市面上的android TV很容易被黑客攻击。">
+<meta property="og:updated_time" content="2016-06-20T11:47:26.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android TV adb 5555端口攻击说明">
+<meta name="twitter:description" content="简单说下智能电视（包括电视盒子）的安全问题：目前市面上智能电视大多是 androidTV，由于Android原生代码中并没有开启身份认证和登录功能，厂商也对智能电 视源代码没进行修改添加身份认证功能，而且通过最高权限的root用户的模式下工作，这 就导致市面上的android TV很容易被黑客攻击。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://wjdr.net/2016/06/20/androidtv-adb-5555/"/>
+
+
+
+
+
+  <title> Android TV adb 5555端口攻击说明 | Kwok's Notes </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Kwok's Notes</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">记录知识,记录瞎扯淡</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://wjdr.net/2016/06/20/androidtv-adb-5555/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Kwok">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/uploads/kwok.png">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Kwok's Notes">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Kwok's Notes" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Android TV adb 5555端口攻击说明
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-06-20T19:26:32+08:00">
+                2016-06-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>简单说下智能电视（包括电视盒子）的安全问题：目前市面上智能电视大多是 androidTV，由于Android原生代码中并没有开启身份认证和登录功能，厂商也对智能电 视源代码没进行修改添加身份认证功能，而且通过最高权限的root用户的模式下工作，这 就导致市面上的android TV很容易被黑客攻击。</p>
+</blockquote>
+<a id="more"></a>
+<p>针对智能电视的黑客攻击方法大致可以分为四种：</p>
+<h3 id="一、WiFi网络攻击"><a href="#一、WiFi网络攻击" class="headerlink" title="一、WiFi网络攻击"></a>一、WiFi网络攻击</h3><p>智能电视要在足够带宽的WiFi环境工作，WiFi是智能电视第一道安全关卡。如果WiFi被破 解，那么包括智能电视、手机、Pad、PC等所有设备都危险了。<br>攻击者通过无线网络破解工具破解WiFi密码连接到内部网络，然后扫描局域网端口，如有 开放5555端口（android默认远程调试端口）为android tv 出厂设置远程调试端口，通过 该端口进行对智能电视的系统进行安装，卸载，修改应用。<br>通过局域网远程端口进行连接到智能电视，并安装恶意软件或其它操作：<br> （1） adb connect 192.168.0.111:5555<br> （2） adb push su /system/xbin pm set-install-location 0 （su工具通过root权限运行后可以进行静默安装，在屏幕上无显示界面）<br> （3） adb install superuser.apk （超级用户授权工具）<br> （4） adb install busybox.apk (系统命令 执行工具箱)<br> （5） adb install AndroRat.apk(android远程控制木马)<br> （6） 通过服务端 进行控制</p>
+<p>通过WiFi网络攻击，攻击者可以对智能电视进行任意操作，如更换频道，恶意弹窗，安装 恶意软件，关闭智能电视，甚至对智能电视固件进行升级导致电视机变成板砖的可能。<br>从问题截图来看，对方（邻居？）应该是先破解了你同学WiFi的密码，然后就可以随意控 制电视显示内容了。并没有多高的技术含量。你同学要做的是尽快改一个复杂的WiFi密 码，并且把WPS/QSS功能关闭。</p>
+<h3 id="二、内网欺骗攻击"><a href="#二、内网欺骗攻击" class="headerlink" title="二、内网欺骗攻击"></a>二、内网欺骗攻击</h3><p> 该攻击方法与其他PC攻击方法大同小异，通过内部网络的 DNS攻击，ARP欺骗，对智能电视播放的APK进行二次打包覆盖安装，对厂商开机广告投 放进行篡改，一般广告投放时通过网页调用一个远程服务器的JS代码，通过劫持或者缓存 投毒方式对JS代码进行相应的修改。</p>
+<h3 id="三、智能电视应用远程服务器受攻击导致展示广告被修改、付费栏目免费使用、-及企业网络进行渗透"><a href="#三、智能电视应用远程服务器受攻击导致展示广告被修改、付费栏目免费使用、-及企业网络进行渗透" class="headerlink" title="三、智能电视应用远程服务器受攻击导致展示广告被修改、付费栏目免费使用、 及企业网络进行渗透"></a>三、智能电视应用远程服务器受攻击导致展示广告被修改、付费栏目免费使用、 及企业网络进行渗透</h3><p>这也属于传统的攻击方法之一，对远程服务器进行扫描发现漏洞后通过利用相应漏洞控制 服务器，一般远程服务器上有多个web应用提供服务，android智能电视载入web页面时 候使用了android原生浏览器webview组件才能载入页面，这个组件存在很多代码注入， 远程代码执行等问题，所以攻击者对载入的页面中嵌入精心构造的恶意脚本会在智能电视 载入应用的网页时候恶意代码执行，导致android远控木马（androrat）会在智能电视机 系统里root超级用户模式神不知鬼不觉的静默安装。</p>
+<p>一些应用程序使用了android webkit模块实现远程网页载入的功能，所以存在和传统WEB 应用一样的漏洞，远程代码执行，SQL注入攻击，此外还有一些其它的跨站脚本，上传文 件，本地或远程包含漏洞。也一般付费用户的在后台上进行添加删除操作，攻击了远程服 务器那就通过数据库轻松修改免费用户改成VIP用户都不是问题。</p>
+<p>除了这方面还有对android系统原生浏览器的漏洞导致致命的远程代码执行漏洞会感染整 个智能电视，智能电视在感染后对整个局域网进行跳板攻击，这时传统杀毒软件无法在智 能电视上工作，任由病毒发作。</p>
+<p>如果智能电视工作在企业内网，那将是个非常大的安全隐患。受感染的智能电视可以通过 NC（黑客瑞士军刀）转发内网的端口到远程服务器上，实现了外网渗透企业用于广告宣传 或者投放的电视机中，长时间在企业内部网络漫游，从而达到进一步攻击的目的。这已经 不是假设性的攻击思路，而是可以在真实环境中危害到企业安全的一个致命威胁。</p>
+<h3 id="四、其他攻击方法"><a href="#四、其他攻击方法" class="headerlink" title="四、其他攻击方法"></a>四、其他攻击方法</h3><p>智能电视可以外接很多附件产品，如摄像头（mic、录制）的控制，还有大部分智能电视 支持USB接口，通过感染USB写入autorun等携带式设备自动播放功能从而进行跳板攻击 其它windows主机等可能，虽然是小概率事件但也不能排除完全不会发生。</p>
+<p>除了这些功能外，智能电视的rom制作过程中也可能被插入木马后门，类似一些山寨 android智能手机预置了oldboot木马的情况。智能手机发生过的安全问题，都可能会在智 能电视上重现。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/12/arm-x86-cpu/" rel="next" title="ARM与X86CPU构架对比区别（转载）">
+                <i class="fa fa-chevron-left"></i> ARM与X86CPU构架对比区别（转载）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/20/Full-Stack-Engineer/" rel="prev" title="怎样成为全栈工程师？">
+                怎样成为全栈工程师？ <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/kwok.png"
+               alt="Kwok" />
+          <p class="site-author-name" itemprop="name">Kwok</p>
+          <p class="site-description motion-element" itemprop="description">个人博客，随便写写。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">6</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://k.wjdr.net" title="OnlinePass" target="_blank">OnlinePass</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、WiFi网络攻击"><span class="nav-number">1.</span> <span class="nav-text">一、WiFi网络攻击</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、内网欺骗攻击"><span class="nav-number">2.</span> <span class="nav-text">二、内网欺骗攻击</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、智能电视应用远程服务器受攻击导致展示广告被修改、付费栏目免费使用、-及企业网络进行渗透"><span class="nav-number">3.</span> <span class="nav-text">三、智能电视应用远程服务器受攻击导致展示广告被修改、付费栏目免费使用、 及企业网络进行渗透</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四、其他攻击方法"><span class="nav-number">4.</span> <span class="nav-text">四、其他攻击方法</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kwok</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

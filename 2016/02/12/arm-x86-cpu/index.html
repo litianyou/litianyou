@@ -1,0 +1,721 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="CPU," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="此篇文章是2016/02/12转载自ARM与X86 CPU构架对比区别，此文章写自2012年，相比近几年ARMCPU快速发展，其内容自行脑补。
+
+CPU的两种架构指令CISC(复杂指令集计算机)和RISC(精简指令集计算机)是当前CPU的两种架构。它们的区别在于不同的CPU设计理念和方法。早期的CPU全部是CISC架构，它的设计目的是  CISC要用最少的机器语言指令来完成所需的计算任务。RIS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ARM与X86CPU构架对比区别（转载）">
+<meta property="og:url" content="http://wjdr.net/2016/02/12/arm-x86-cpu/index.html">
+<meta property="og:site_name" content="Kwok's Notes">
+<meta property="og:description" content="此篇文章是2016/02/12转载自ARM与X86 CPU构架对比区别，此文章写自2012年，相比近几年ARMCPU快速发展，其内容自行脑补。
+
+CPU的两种架构指令CISC(复杂指令集计算机)和RISC(精简指令集计算机)是当前CPU的两种架构。它们的区别在于不同的CPU设计理念和方法。早期的CPU全部是CISC架构，它的设计目的是  CISC要用最少的机器语言指令来完成所需的计算任务。RIS">
+<meta property="og:updated_time" content="2016-02-19T03:31:10.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ARM与X86CPU构架对比区别（转载）">
+<meta name="twitter:description" content="此篇文章是2016/02/12转载自ARM与X86 CPU构架对比区别，此文章写自2012年，相比近几年ARMCPU快速发展，其内容自行脑补。
+
+CPU的两种架构指令CISC(复杂指令集计算机)和RISC(精简指令集计算机)是当前CPU的两种架构。它们的区别在于不同的CPU设计理念和方法。早期的CPU全部是CISC架构，它的设计目的是  CISC要用最少的机器语言指令来完成所需的计算任务。RIS">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://wjdr.net/2016/02/12/arm-x86-cpu/"/>
+
+
+
+
+
+  <title> ARM与X86CPU构架对比区别（转载） | Kwok's Notes </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Kwok's Notes</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">记录知识,记录瞎扯淡</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://wjdr.net/2016/02/12/arm-x86-cpu/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Kwok">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/uploads/kwok.png">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Kwok's Notes">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Kwok's Notes" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                ARM与X86CPU构架对比区别（转载）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-02-12T21:59:44+08:00">
+                2016-02-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>此篇文章是2016/02/12转载自<a href="http://ihyperwin.iteye.com/blog/1701132" target="_blank" rel="external">ARM与X86 CPU构架对比区别</a>，此文章写自2012年，相比近几年ARMCPU快速发展，其内容自行脑补。</p>
+</blockquote>
+<h2 id="CPU的两种架构指令"><a href="#CPU的两种架构指令" class="headerlink" title="CPU的两种架构指令"></a>CPU的两种架构指令</h2><p>CISC(复杂指令集计算机)和RISC(精简指令集计算机)是当前CPU的两种架构。它们的区别在于不同的CPU设计理念和方法。早期的CPU全部是CISC架构，它的设计目的是  CISC要用最少的机器语言指令来完成所需的计算任务。RISC和CISC是设计制造微处理器的两种典型技术，虽然它们都是试图在体系结构、操作运行、软件硬件、编译时间和运行时间等诸多因素中做出某种平衡，以求达到高效的目的，但采用的方法不同，因此，在很多方面差异很大.</p>
+<p><strong> x86架构采用CISC，而ARM采用RISC</strong></p>
+<a id="more"></a>
+<p>ARM成立于1991年，是一家出售IP（技术知识产权）的公司，所谓的技术知识产权，就有点像是卖房屋的结构设计图，至于要怎修改，哪边开窗户，以及要怎加盖其它的花园，就看买了设计图的厂商自己决定。</p>
+<p>而ARM的架构是采用RISC架构，如同它的名称一样，Advanced RISC Machines，RISC架构在当初的PC架构争霸战虽然败给Intel所主导的x86处理器架构，却默默在另外的领域成长壮大；小从硬盘转速控制、电信基地台的计算、汽车喷射引擎的控制、音响系统、相机引擎，大到电动机具的控制等等，都能够看见采用ARM授权架构处理器的身影。</p>
+<p>而有了设计图，当然还要有把设计图实现的厂商，而这些就是ARM架构的授权客户群。包括：<br>TI OMAP、Qualcomm Snapdragon、三星的蜂鸟（Hummingbird）、猎户座（Orion）、飞思卡尔（Freescale）的i.MX，或是ST-Ericsson的应用处理器、Freescale、联发科、Telechip、新岸线等。</p>
+<p>X86是英特尔Intel首先开发制造的一种微处理器体系结构的泛称，包括Intel8086、80186、80286、80386以及80486以86结尾系列，英特尔统治整个CPU产业链长达数十年。但是，Intel以增加处理器本身复杂度作为代价，去换取更高的性能，但集成的指令集数量越来越多，给硬件带来的负荷也就越来越大，无形中增加了功耗和设计难度。</p>
+<p>ARM（Advanced RISC Machines）公司是苹果、Acorn、VLSI、Technology等公司的合资企业。ARM采用将芯片的设计方案授权（licensing）给其他公司生产的模式，在世界范围结成了超过100个的合作伙伴（Partners），将封闭设计的Intel公司变成全民公敌。ARM处理器非常适用于移动通信领域，具有低成本、高性能和低耗电的特性，ARM的高性价比和低耗能在移动市场比英特尔更具优势。</p>
+<p>ARM的架构相较于x86有哪些特点？相较于基于CISC的x86架构处理器，由于为了满足电脑产业发展而不断加入指令集，使得处理器日益庞大，但每个指令集用到的频率也越差越大，许多指令到后来已经相当少用，甚至是可以被新的指令所取代。而ARM架构则大幅简化架构，仅保留所需要的指令，可以让整个处理器更为简化，拥有小体积、高效能的特性。</p>
+<p>另外，ARM的架构老早就已经作到高密度整合，由于ARM授权的弹性以及核心架构单纯，ARM处理器架构可以很容易与其它专职的特殊核心，像是GPU、多媒体译码核心、基频调制解调器、I/O控制等架构整合，透过SoC（System On a Chip，系统单芯片）的方式，一颗小小的ARM架构应用处理器，完成近年x86架构处理器积极跨足的单芯片设计，并且透过各种不同的核心分工各司其职，ARM架构应用处理器的核心负担相较传统x86处理器低上许多，并且因为早前应用处理器的需求就是以低功耗为重点，即便如今效能不断提升，仍是以保有省电的特性为前提发展。</p>
+<p>ARM架构的另一个优点，就是自由性，只要像ARM买下核心授权，就可以与其它IP公司的方案以及这家授权客户本身的优势技术整合，虽同为同一世代的ARM核心架构，即便频率相同，结果也不同。不过这也使得ARM应用处理器光从基本规格是不一定能看出操作效能的，例如同样隶属高通Snapdragon，频率1GHz的第一世代旗舰QSD8x50甚至不敌频率仅800MHz的第二世代MSM7230。</p>
+<p>ARM的架构之所以在智能手机以及平板能够迅速窜红，苹果iOS装置可说是大功臣，在苹果之前，智能手机在市场上一直载浮载沉，虽然有着号称智能手机平台市占率第一的Nokia Symbian，以及Windows Mobile、Palm OS、BlackBerry等系统，不过当时的环境在缺乏行动网络为后盾，在线商店的概念也还未发展成型；一直到苹果以iPhone打响新世代智能手机第一炮后，市场才真正体认到智能手机原来可以是这么容易使用。</p>
+<p>iPhone的出现也间接带起市场对于ARM架构应用处理器的需求，不过光是苹果也无法带起市场对于ARM处理器的需求，如WM（WP7)手机与Symbian也纷纷加入新一代智能手机战局，但是真正成为关键的，是Google Android宣布参战后，其它手机厂商取得一个相较过去成熟的通用智能手机平台，而各厂商又为了进行产品差异化，开始针对ARM架构应用处理器的效能以及硬件支持要求，使得过去发展缓速的ARM架构一下子热络起来，也让ARM架构一夕之间成为火热话题。</p>
+<p>GOOGLE的Android系统和苹果的IPAD、IPHONE推出后，ARM架构的电脑系统（特别是在终端方面应用）受到用户的广泛支持和追捧，ARM+Android成为IT、通信领域最热门的话题，众多芯片厂商纷纷推出具有各种独特应用功能基于ARM结构开发的产品，近期最新形成的“异构概念”更成为电脑今后发展主要方向。在IT行业推崇了20多年的“性价比“概念受到根本的动摇和冲击，“适用的才是最好的”已经被越来越多的用户接受。</p>
+<p>我们就ARM架构的系统与X86架构系统的特性进行一个系统分析，方便用户在选择系统时进行理性、合理的比价分析。</p>
+<h2 id="ARM与X86综合对比："><a href="#ARM与X86综合对比：" class="headerlink" title="ARM与X86综合对比："></a>ARM与X86综合对比：</h2><h3 id="一、性能："><a href="#一、性能：" class="headerlink" title="一、性能："></a>一、性能：</h3><p>X86结构的电脑无论如何都比ARM结构的系统在性能方面要快得多、强得多。X86的CPU随便就是1G以上、双核、四核大行其道，通常使用45nm（甚至更高级）制程的工艺进行生产；而ARM方面：CPU通常是几百兆，最近才出现1G左右的CPU，制程通常使用不到65nm制程的工艺，可以说在性能和生产工艺方面ARM根本不是X86结构系统的对手。</p>
+<p>但ARM的优势不在于性能强大而在于效率，ARM采用RISC流水线指令集，在完成综合性工作方面根本就处于劣势，而在一些任务相对固定的应用场合其优势就能发挥得淋漓尽致。</p>
+<h3 id="二、扩展能力"><a href="#二、扩展能力" class="headerlink" title="二、扩展能力"></a>二、扩展能力</h3><p>X86结构的电脑采用“桥”的方式与扩展设备（如：硬盘、内存等）进行连接，而且x86结构的电脑出现了近30年，其配套扩展的设备种类多、价格也比较便宜，所以x86结构的电脑能很容易进行性能扩展，如增加内存、硬盘等。</p>
+<p>ARM结构的电脑是通过专用的数据接口使CPU与数据存储设备进行连接，所以ARM的存储、内存等性能扩展难以进行（一般在产品设计时已经定好其内存及数据存储的容量），所以采用ARM结构的系统，一般不考虑扩展。基本奉行“够用就好”的原则。</p>
+<h3 id="三、操作系统的兼容性"><a href="#三、操作系统的兼容性" class="headerlink" title="三、操作系统的兼容性"></a>三、操作系统的兼容性</h3><p>X86系统由微软及Intel构建的Wintel联盟一统天下，垄断了个人电脑操作系统近30年，形成巨大的用户群，也深深固化了众多用户的使用习惯，同时x86系统在硬件和软件开发方面已经形成统一的标准，几乎所有x86硬件平台都可以直接使用微软的视窗系统及现在流行的几乎所有工具软件，所以x86系统在兼容性方面具有无可比拟的优势。</p>
+<p>ARM系统几乎都采用Linux的操作系统，而且几乎所有的硬件系统都要单独构建自己的系统，与其他系统不能兼容，这也导致其应用软件不能方便移植，这一点一直严重制约了ARM系统的发展和应用。GOOGLE开发了开放式的Android系统后，统一了ARM结构电脑的操作系统，使新推出基于ARM结构的电脑系统有了统一的、开放式的、免费的操作系统，为ARM的发展提供了强大的支持和动力。</p>
+<h3 id="四、软件开发的方便性及可使用工具的多样性"><a href="#四、软件开发的方便性及可使用工具的多样性" class="headerlink" title="四、软件开发的方便性及可使用工具的多样性"></a>四、软件开发的方便性及可使用工具的多样性</h3><p>X86结构的系统推出已经近30年，在此期间，x86电脑经过飞速发展的黄金时期，用户的应用、软件配套、软件开发工具的配套及兼容等工作，已经到达非常成熟甚至可以说是完美的境界。所以使用X86电脑系统不仅有大量的第三方软件可供选择，也有大量的软件编程工具可以帮助您完成您所希望完成的工作。</p>
+<p>ARM结构的电脑系统因为硬件性能的制约、操作系统的精简、以及系统兼容等问题的制约，造成Arm结构的电脑系统不可能像X86电脑系统那样有众多的编程工具和第三方软件可供选择及使用，ARM的编程语言大多采用C和JAVA。</p>
+<p>对这一点的比较，更直接的结论是：基于x86结构电脑系统平台开发软件比arm结构系统更容易、更简单、实际成本也更低，同时更容易找到第三方软件（免去自己开发的时间和成本），而且软件移植更容易。</p>
+<p>从以上对比分析，给了我们的一个很清晰的感觉，ARM和X86结构的电脑根本就无法对比，ARM根本就不是X86电脑的的对手。是的，如果只考虑上述几个方面的要数，ARM确实无法与X86电脑竞争，甚至连比较的资格都没有。但是近1、2年，ARM的产品在终端应用特别是手持终端应用飞速发展（如：智能手机、平板电脑等），其销售数量已经远远超出x86结构的电脑销售数量，可见ARM是具有其与X86结构电脑不可对比的优势。该优势就是：功耗.</p>
+<h3 id="五、功耗"><a href="#五、功耗" class="headerlink" title="五、功耗"></a>五、功耗</h3><p>X86电脑因考虑要适应各种应用的需求，其发展思路是：性能+速度。20多年来x86电脑的速度从原来8088的几M发展到现在随便就是几G，而且还是几核，其速度和性能已经提升了千、万倍，技术进步使x86电脑成为大众生活中不可缺少的一部分。但是x86电脑发展的方向和模式，使其功耗一直居高不下，一台电脑随便就是几百瓦，即使是号称低功耗节能的手提电脑或上网本，也有十几、二十多瓦的功耗，这与ARM结构的电脑就无法相比。</p>
+<p>ARM的设计及发展思路是：满足某个特殊方面的应用即可，在某一专项领域是最强的，（哪怕在其他方面一无是处），这样Arm以其不是最强的技术，同样也不是很高级制程的制造工艺，生产出性能不是很强的电脑系统，但在某个专业应用方面则是最好的，特别是在众多终端应用，尤其在移动终端应用上占有绝对优势的统治地位，这个原因就是：功耗。</p>
+<p>高功耗导致了一系列X86系统无法解决的问题出现：系统的续航能力弱、体积无法缩小、稳定性差、对使用环境要求高等问题。从这里我们可以看到x86系统与ARM系统是在两个完全不同领域方面的应用，他们之间根本不存在替换性，在服务器、工作站以及其他高性能运算等应用方面，是可以不考虑功耗和使用环境等条件时，X86系统占了优绝对优势；但受功耗、环境等条件制约且工作任务固定的情况下ARM就占有很大的优势，在手持式移动终端领域，X86的功耗更使他英雄毫无用武之地。</p>
+<p>但在很多的应用终端领域，现正成为两大阵营争夺的重点，ARM阵营努力增加其性能和系统（特别是操作系统）的通用性，蚕食x86系统的部分终端应用市场；X86阵营努力降低功耗保住其市场，同时侵入手持移动终端市场。</p>
+<hr>
+<p>我们今天讨论的重点就是在两大阵营都能可以覆盖的终端应用领域进行对比、分析。这类型的应用一定是终端应用，通常有下面几个特征：</p>
+<ol>
+<li><p>系统的工作性质比较固定（如：POS、ATM、车载电脑系统、多媒体广告播放系统、视频监控系统，以及众多的信息接收、控制系统和专业的工控系统等等）；</p>
+</li>
+<li><p>应用环境比较恶劣，如：温度变化很大，高温超过40度，低温达零下20度；多尘、潮湿等；</p>
+</li>
+<li><p>有一定的应用数量，但数量不是很大。</p>
+</li>
+</ol>
+<p>这部分的应用领域传统上是由X86结构的低功耗工控机（系统）实现的，但近几年ARM系统的飞速发展，特别是Android操作系统出现后，ARM+Android大有取代x86系统占领（低功耗）终端应用领域的趋势。我们在考虑这种应用对比时根据ARM和X86的特性对比主要还考虑以下以及因数：</p>
+<ol>
+<li><p>性能：</p>
+<p> 如果ARM系统的性能能满足应用需求时，建议尽可能可虑采用ARM结构的产品，否则只能考虑X86的产品。注意在这里我们要强调的是：不要讲两个系统的绝对性能进行比较，而是以能否您的应用特点为标准进行分析。</p>
+</li>
+<li><p>应用数量：</p>
+<p> 如果您的应用数量太少，您可能根本不值得独立开发一套应用系统，但如果您的应用数量达到几百甚至过千时，您是值得考虑自己开发一套新的系统的。因为：Arm的开发成本和制造成本相对比较低，如果有几百个以上终端应用，应该可以分摊掉开发成本。</p>
+<p> 如果选用X86结构的系统，根本不应该考虑单独开发一套专用系统（因为开发成本太高，可能是ARM的10倍），而是在市场上筛选出最接近您需求的产品，以避免高昂的硬件开发成本，和今后的制造成本（如果批次生产的数量不够，排产成本也会很高）。</p>
+</li>
+<li><p>操作系统</p>
+<p> ARM的操作系统通常是单独建立一个自己的Linux系统，且系统与系统间不能兼容，这严重制约了Arm的应用扩展，但Android出现后，系统兼容的屏障正逐步消失，促进了系统以及应用软件的兼容，大大扩大了ARM应用软件的的数量同时扩大了其应用空间。</p>
+</li>
+<li><p>功耗以及功耗延伸的系列问题</p>
+<p> ARM的优势是功耗低，其实低功耗还意味着：</p>
+<ul>
+<li><p>稳定性高：因为功耗越高电子元器件的稳定性和可靠性越差，对低功耗的产品只要选择好外围元件的品质，系统的稳定性不会有太大问题；</p>
+</li>
+<li><p>散热成本低和可以考虑更小的产品体积：对高功耗的产品不可避免要考虑散热问题，而散热设备（或器件）的存在，有制约了产品的体积，对某些场合的应用构成致命的制约。但ARM的功耗&lt;1W，完全不用考虑散热问题。</p>
+</li>
+<li><p>功耗低对供电电源的要求低：几乎所有电子产品，（在同等条件下）功耗越高对电源的要求越高，电源的成本就越高。</p>
+</li>
+<li><p>功耗低电池的续航时间长，这不作详尽解释。</p>
+</li>
+<li><p>功耗低对抗环境伤害的能力强：低功耗产品因为不用考虑散热，可以将产品密封保护起来，但高功耗产品必须散热，甚至需要风扇帮助散热，这样必然使很多的元件和线路裸露在空气中，被空气中的尘埃、湿气、酸碱物质等腐蚀。</p>
+</li>
+</ul>
+</li>
+<li><p>软件开发成本问题</p>
+<p> ARM的操作系统很小（精简）不可能带很多工具，通常基于ARM的软件大多用C或JAVA开发，其成本会比基于X86系统的高。而且对大多数ARM而言，因其操作系统不一样，软件业不能在两个系统中自由互换使用，但一般来说：用C或JAVA编写的软件只需在ARM平台的操作系统中编译一下就可以移植过去。</p>
+<p> 但对Android系统开发的软件，只要能在某台Arm设备中运行，就可以在另一台基于同样系统的设备中运行。</p>
+</li>
+<li><p>硬件的开发成本</p>
+<p> ARM实际上在CPU芯片中已经整合了几乎所有功能，几乎所有线路按原理图直接拉出就可以了，需要扩展的部分一般不多，所以其开发成本会比较低，通常三五万就可以了。</p>
+<p> 但X86的外围线路很多，需要相当经验的工程师，而且还有BIOS等设计，所以X86主板的设计费用会比较高，通常要二三十万。</p>
+</li>
+<li><p>硬件的制造及应用成本</p>
+<p> 无论ARM或X86主板其制造成本都是由元件和加工费构成，通常一片ARM的主板价格与一片X86主板的价格差不多，但ARM是一片可以独立使用的产品，但x86主板通常还要加上：CPU、内存、硬盘甚至还有显卡。</p>
+<p> 另外X86还要配上一个电源，这个电源比ARM得电源要贵很多。</p>
+</li>
+</ol>
+<p>所以：<strong> 明显X86在硬件方面的应用成本比ARM高得多。</strong></p>
+<p>总结上面对比，X86系统和ARM系统应该是两个完全不同领域的应用，如果功能单一又受到环境制约的应用，如：POS、ATM、多媒体广告机（现已经有ARM+DSP的产品）、车载电脑终端等应用，应该首先考虑ARM方案，ARM方案与X86相比，其功耗和成本占有很大优势。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CPU/" rel="tag"># CPU</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/20/androidtv-adb-5555/" rel="prev" title="Android TV adb 5555端口攻击说明">
+                Android TV adb 5555端口攻击说明 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/kwok.png"
+               alt="Kwok" />
+          <p class="site-author-name" itemprop="name">Kwok</p>
+          <p class="site-description motion-element" itemprop="description">个人博客，随便写写。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">6</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://k.wjdr.net" title="OnlinePass" target="_blank">OnlinePass</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU的两种架构指令"><span class="nav-number">1.</span> <span class="nav-text">CPU的两种架构指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ARM与X86综合对比："><span class="nav-number">2.</span> <span class="nav-text">ARM与X86综合对比：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、性能："><span class="nav-number">2.1.</span> <span class="nav-text">一、性能：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、扩展能力"><span class="nav-number">2.2.</span> <span class="nav-text">二、扩展能力</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、操作系统的兼容性"><span class="nav-number">2.3.</span> <span class="nav-text">三、操作系统的兼容性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四、软件开发的方便性及可使用工具的多样性"><span class="nav-number">2.4.</span> <span class="nav-text">四、软件开发的方便性及可使用工具的多样性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#五、功耗"><span class="nav-number">2.5.</span> <span class="nav-text">五、功耗</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Kwok</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
