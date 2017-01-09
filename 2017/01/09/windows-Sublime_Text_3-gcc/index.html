@@ -85,39 +85,24 @@
 
 
 <meta name="description" content="本文记录Windows下的C语言开发环境（Sublime Text 3 + gcc）开发环境搭建，包括MinGW的安装，gcc运行c语言，在sublime中运行以及在cmd中运行的方法。
-##安装：
-
+安装：
 MinGW
-Sublime Text 3
-
-###MinGW安装配置：
-
-MinGW是Minimalist GNU on Windows的首字母缩写，安装后就可以使用很多的GNU工具。GNU（GNU">
+Sublime Text 3">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Windows下C语言学习与开发的Sublime Text 3 与 gcc 配置记录">
 <meta property="og:url" content="http://wjdr.net/2017/01/09/windows-Sublime_Text_3-gcc/index.html">
 <meta property="og:site_name" content="Kwok's Notes">
 <meta property="og:description" content="本文记录Windows下的C语言开发环境（Sublime Text 3 + gcc）开发环境搭建，包括MinGW的安装，gcc运行c语言，在sublime中运行以及在cmd中运行的方法。
-##安装：
-
+安装：
 MinGW
-Sublime Text 3
-
-###MinGW安装配置：
-
-MinGW是Minimalist GNU on Windows的首字母缩写，安装后就可以使用很多的GNU工具。GNU（GNU">
-<meta property="og:updated_time" content="2017-01-09T08:06:14.000Z">
+Sublime Text 3">
+<meta property="og:updated_time" content="2017-01-09T11:50:52.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Windows下C语言学习与开发的Sublime Text 3 与 gcc 配置记录">
 <meta name="twitter:description" content="本文记录Windows下的C语言开发环境（Sublime Text 3 + gcc）开发环境搭建，包括MinGW的安装，gcc运行c语言，在sublime中运行以及在cmd中运行的方法。
-##安装：
-
+安装：
 MinGW
-Sublime Text 3
-
-###MinGW安装配置：
-
-MinGW是Minimalist GNU on Windows的首字母缩写，安装后就可以使用很多的GNU工具。GNU（GNU">
+Sublime Text 3">
 
 
 
@@ -336,13 +321,12 @@ MinGW是Minimalist GNU on Windows的首字母缩写，安装后就可以使用�
 
       
         <p>本文记录Windows下的C语言开发环境（Sublime Text 3 + gcc）开发环境搭建，包括MinGW的安装，gcc运行c语言，在sublime中运行以及在cmd中运行的方法。</p>
-<p>##安装：</p>
-<ul>
+<h2 id="安装："><a href="#安装：" class="headerlink" title="安装："></a>安装：</h2><ul>
 <li>MinGW</li>
 <li>Sublime Text 3</li>
 </ul>
-<p>###MinGW安装配置：</p>
-<blockquote>
+<a id="more"></a>
+<h3 id="MinGW安装配置："><a href="#MinGW安装配置：" class="headerlink" title="MinGW安装配置："></a>MinGW安装配置：</h3><blockquote>
 <p>MinGW是Minimalist GNU on Windows的首字母缩写，安装后就可以使用很多的GNU工具。GNU（GNU’s Not Unix）是linux中的一个著名的项目，包含了gcc\g++\gdb等工具。也就是说，安装MinGw后，我们就可以使用gcc和g++命令了。</p>
 </blockquote>
 <p>由于官网下载方式需要网络安装，经过尝试最终还是由于网络原因安装失败，最终妥协后使用了网络下载的解压版MinGW</p>
@@ -354,14 +338,18 @@ MinGW是Minimalist GNU on Windows的首字母缩写，安装后就可以使用�
 <p>右键计算机-&gt;属性-&gt;高级系统设置-&gt;环境变量<br>添加“C:\MinGW\bin”到“Path”</p>
 </blockquote>
 <p>注意：Windows环境变量的修改不会立即生效，需要重启Windows。</p>
-<p>###Sublime Text 3配置：</p>
-<blockquote>
+<hr>
+<h3 id="Sublime-Text-3配置："><a href="#Sublime-Text-3配置：" class="headerlink" title="Sublime Text 3配置："></a>Sublime Text 3配置：</h3><blockquote>
 <p>Sublime Text 3无疑是众多码农的最爱，但Sublime Text 3只是一款编辑器，在C代码开发中，如果可以用Sublime Text 3调用gcc来完成编译运行，无疑是最好不过了。</p>
 </blockquote>
 <p>在Sublime Text 3 中选择tool –&gt; Build System –&gt; New Build System，复制粘贴以下代码：</p>
 <figure class="highlight nsis"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">	<span class="string">"working_dir"</span>: <span class="string">"<span class="variable">$file_path</span>"</span>,</div><div class="line">	<span class="string">"cmd"</span>: <span class="string">"gcc -Wall -fexec-charset=GBK \"</span><span class="variable">$file_name</span>\<span class="string">" -o \"</span><span class="variable">$file_base_name</span>\<span class="string">""</span>,</div><div class="line">	<span class="string">"file_regex"</span>: <span class="string">"^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$"</span>,</div><div class="line">	<span class="string">"selector"</span>: <span class="string">"source.c"</span>,</div><div class="line"> </div><div class="line">	<span class="string">"variants"</span>: </div><div class="line">	[</div><div class="line">		&#123;	</div><div class="line">		<span class="string">"name"</span>: <span class="string">"Run"</span>,</div><div class="line">        	<span class="string">"shell_cmd"</span>: <span class="string">"gcc -Wall -fexec-charset=GBK \"</span><span class="variable">$file</span>\<span class="string">" -o \"</span><span class="variable">$file_base_name</span>\<span class="string">" &amp;&amp; start cmd /c \"</span>\<span class="string">"<span class="variable">$&#123;file_path&#125;</span>/<span class="variable">$&#123;file_base_name&#125;</span>\"</span> &amp; pause\<span class="string">""</span></div><div class="line">		&#125;</div><div class="line">	]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>需要注意的是，在gcc编译参数中，加入了“-Wall”和“-fexec-charset=GBK”，“-Wall”参数是打开常用的警告，“-fexec-charset=GBK”参数则是解决中文乱码问题，由于Sublime Text 3中文件默认编码格式是utf-8 ，而windows中的命令行默认编码格式是GBK 。所以代码中出现中文时运行会乱码。加入“-fexec-charset=GBK”选项后，代码中的字符串按照GBK编码，就和CMD窗口保持一致，便不会发生中文乱码问题。<br>但是加入这个选项后，如果要编译的不是utf-8 ，而是GBK ，必须还要加入-finput-charset=GBK 选项来制定源代码的编码格式，否则会提示错误，而加入这个选项后编译utf-8又会乱码，所以建议在Sublime Text中全部使用UTF-8编码格式。<br>按Ctrl+S保存，会自动打开user目录（Sublime Text 3\Packages\User），修改文件名为 C.sublime-build，保存在此目录。<br>这时候，可以在Tools -&gt; Build System下看到刚才新建的C了，选中后就可以使用了。<br>Build System中除了选择具体的编译系统，还可以选择第一个：Automatic 自动选择，会根据打开的文件后缀自动选择。</p>
-<p>##完成<br>配置完成后，使用Ctrl+B和Ctrl+shift+B便可以编译运行了。</p>
+<blockquote>
+<p>需要注意的是，在gcc编译参数中，加入了“-Wall”和“-fexec-charset=GBK”，“-Wall”参数是打开常用的警告，“-fexec-charset=GBK”参数则是解决中文乱码问题，由于Sublime Text 3中文件默认编码格式是utf-8 ，而windows中的命令行默认编码格式是GBK 。所以代码中出现中文时运行会乱码。加入“-fexec-charset=GBK”选项后，代码中的字符串按照GBK编码，就和CMD窗口保持一致，便不会发生中文乱码问题。</p>
+<p>但是加入这个选项后，如果要编译的不是utf-8 ，而是GBK ，必须还要加入-finput-charset=GBK 选项来制定源代码的编码格式，否则会提示错误，而加入这个选项后编译utf-8又会乱码，所以建议在Sublime Text中全部使用UTF-8编码格式。</p>
+</blockquote>
+<p>按Ctrl+S保存，会自动打开user目录（Sublime Text 3\Packages\User），修改文件名为 C.sublime-build，保存在此目录。<br>这时候，可以在Tools -&gt; Build System下看到刚才新建的C了，选中后就可以使用了。<br>Build System中除了选择具体的编译系统，还可以选择第一个：Automatic 自动选择，会根据打开的文件后缀自动选择。</p>
+<h2 id="完成"><a href="#完成" class="headerlink" title="完成"></a>完成</h2><p>配置完成后，使用Ctrl+B和Ctrl+shift+B便可以编译运行了。</p>
 <blockquote>
 <p>技术参考文章：<a href="http://www.yalewoo.com/sublime_text_3_gcc.html" title="sublime text 3配置c/c++编译环境" target="_blank" rel="external">http://www.yalewoo.com/sublime_text_3_gcc.html</a></p>
 </blockquote>
@@ -459,8 +447,17 @@ MinGW是Minimalist GNU on Windows的首字母缩写，安装后就可以使用�
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/uploads/kwok.png"
@@ -520,6 +517,22 @@ MinGW是Minimalist GNU on Windows的首字母缩写，安装后就可以使用�
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装："><span class="nav-number">1.</span> <span class="nav-text">安装：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MinGW安装配置："><span class="nav-number">1.1.</span> <span class="nav-text">MinGW安装配置：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Sublime-Text-3配置："><span class="nav-number">1.2.</span> <span class="nav-text">Sublime Text 3配置：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#完成"><span class="nav-number">2.</span> <span class="nav-text">完成</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
     </div>
